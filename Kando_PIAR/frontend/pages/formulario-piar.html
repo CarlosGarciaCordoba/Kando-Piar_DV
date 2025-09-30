@@ -284,7 +284,16 @@
                                 </div>
                             </div>
 
-                            <!-- Fila 9: Asistencia a institución de rehabilitación -->
+                            <!-- Fila 9.1: Lugar de atención en emergencias -->
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label for="lugarEmergencia">Lugar donde lo atienden en caso de emergencia:</label>
+                                    <input type="text" id="lugarEmergencia" name="lugarEmergencia" placeholder="Ej: Hospital Universitario de Santander, Clínica Foscal...">
+                                    <div class="error-message" id="lugarEmergenciaError"></div>
+                                </div>
+                            </div>
+
+                            <!-- Fila 10: Asistencia a institución de rehabilitación -->
                             <div class="form-row">
                                 <div class="form-group">
                                     <label>¿Asiste a alguna institución de rehabilitación? <span class="required">*</span></label>
@@ -308,9 +317,7 @@
                             <div class="form-row" id="rehabilitacionDetails" style="display: none;">
                                 <div class="form-group">
                                     <label for="institucionRehabilitacion">Nombre de la institución: <span class="required">*</span></label>
-                                    <select id="institucionRehabilitacion" name="institucionRehabilitacion">
-                                        <option value="">Seleccione...</option>
-                                    </select>
+                                    <input type="text" id="institucionRehabilitacion" name="institucionRehabilitacion" placeholder="Ej: Centro de Rehabilitación Integral, FOSCAL...">
                                     <div class="error-message" id="institucionRehabilitacionError"></div>
                                 </div>
                                 <div class="form-group">
@@ -325,7 +332,7 @@
                             <!-- Fila 11: Diagnóstico médico -->
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label>¿Tiene diagnóstico médico? <span class="required">*</span></label>
+                                    <label>¿Tiene diagnóstico médico para ser clasificado en una de las categorías del SIMAT? <span class="required">*</span></label>
                                     <div class="radio-group">
                                         <label class="radio-label">
                                             <input type="radio" name="tieneDiagnostico" value="si" required>
@@ -347,6 +354,31 @@
                                         <!-- Opciones de parametrización -->
                                     </select>
                                     <div class="error-message" id="diagnosticoError"></div>
+                                </div>
+                            </div>
+
+                            <!-- Fila 11.1: Enfermedad actual -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>¿Actualmente tiene alguna enfermedad a considerar? <span class="required">*</span></label>
+                                    <div class="radio-group">
+                                        <label class="radio-label">
+                                            <input type="radio" name="tieneEnfermedadActual" value="si" required>
+                                            <span class="radio-custom"></span>
+                                            Sí
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="tieneEnfermedadActual" value="no" required>
+                                            <span class="radio-custom"></span>
+                                            No
+                                        </label>
+                                    </div>
+                                    <div class="error-message" id="tieneEnfermedadActualError"></div>
+                                </div>
+                                <div class="form-group" id="enfermedadActualGroup" style="display: none;">
+                                    <label for="enfermedadActual">¿Cuál? <span class="required">*</span></label>
+                                    <input type="text" id="enfermedadActual" name="enfermedadActual" placeholder="Describa la enfermedad actual...">
+                                    <div class="error-message" id="enfermedadActualError"></div>
                                 </div>
                             </div>
 
