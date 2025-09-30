@@ -332,10 +332,31 @@ INSERT INTO generos (id_genero, descripcion) VALUES
 (4, 'PREFIERO NO DECIRLO');
 
 -- =============================================
+-- DATOS INICIALES - EPS
+-- =============================================
+INSERT INTO eps (id_eps, nombre, descripcion) VALUES
+(1, 'ASMETSALUD', 'Asociación Mutual Ser Empresa Solidaria de Salud'),
+(2, 'COOSALUD', 'Cooperativa de Salud y Desarrollo Integral'),
+(3, 'COOMEVA', 'Cooperativa Médica del Valle y de Profesionales de Colombia'),
+(4, 'COMPARTA', 'EPS Comparta'),
+(5, 'FAMISANAR', 'Famisanar EPS'),
+(6, 'NUEVA EPS', 'Nueva EPS S.A.'),
+(7, 'MEDIMAS', 'Medimás EPS S.A.S.'),
+(8, 'SALUDMIA', 'Salud Mía EPS S.A.S.'),
+(9, 'SALUD TOTAL', 'EPS Salud Total S.A.'),
+(10, 'SANITAS', 'EPS Sanitas S.A.'),
+(11, 'SURA', 'EPS SURA S.A.'),
+(12, 'ECOPETROL', 'EPS Ecopetrol S.A.'),
+(13, 'AVANZAR MEDICO', 'Avanzar Médico EPS'),
+(14, 'UIS SALUD', 'Universidad Industrial de Santander - Salud'),
+(15, 'FERROCARRILES NACIONALES', 'EPS Ferrocarriles Nacionales de Colombia'),
+(16, 'SANIDAD MILITAR', 'Dirección de Sanidad Militar'),
+(17, 'POLICIA NACIONAL', 'Dirección Nacional de Sanidad Policía Nacional');
+
+-- =============================================
 -- DATOS INICIALES PARA PARAMETRIZACIONES FUTURAS
 -- Se agregarán según se implementen las tablas correspondientes:
 -- - niveles_educativos: Preescolar, Primaria, Secundaria, etc.
--- - entidades_salud: EPS principales de Colombia
 -- - departamentos y municipios: Datos DANE
 
 
@@ -380,12 +401,41 @@ CREATE TABLE generos (
 );
 
 -- =============================================
+-- TABLA DE EPS
+-- Contiene las diferentes Entidades Promotoras de Salud disponibles en Colombia
+-- =============================================
+CREATE TABLE eps (
+    id_eps INTEGER PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
+    descripcion VARCHAR(200),
+    estado BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =============================================
+-- TABLA DE FRECUENCIAS DE REHABILITACIÓN
+-- =============================================
+-- Contiene las diferentes frecuencias de asistencia a instituciones de rehabilitación
+-- =============================================
+CREATE TABLE frecuencias_rehabilitacion (
+    id_frecuencia INTEGER PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL UNIQUE,
+    descripcion VARCHAR(200),
+    estado BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =============================================
 -- ÍNDICES PARA OPTIMIZACIÓN
 -- =============================================
 CREATE INDEX idx_municipios_departamento ON municipios(id_departamento);
 CREATE INDEX idx_municipios_descripcion ON municipios(descripcion);
 CREATE INDEX idx_departamentos_descripcion ON departamentos(descripcion);
 CREATE INDEX idx_generos_descripcion ON generos(descripcion);
+CREATE INDEX idx_eps_nombre ON eps(nombre);
+CREATE INDEX idx_frecuencias_rehabilitacion_nombre ON frecuencias_rehabilitacion(nombre);
 
 -- =============================================
 -- TRIGGERS PARA UPDATED_AT
@@ -405,6 +455,18 @@ CREATE TRIGGER update_municipios_updated_at BEFORE UPDATE ON municipios
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER update_generos_updated_at BEFORE UPDATE ON generos
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_eps_updated_at BEFORE UPDATE ON eps
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_frecuencias_rehabilitacion_updated_at BEFORE UPDATE ON frecuencias_rehabilitacion
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_generos_updated_at BEFORE UPDATE ON generos
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_eps_updated_at BEFORE UPDATE ON eps
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- =============================================

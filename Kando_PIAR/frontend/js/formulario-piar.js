@@ -21,6 +21,7 @@ const FormularioPIAR = (function() {
     const afiliadoSaludRadios = document.querySelectorAll('input[name="afiliadoSalud"]');
     const asisteRehabilitacionRadios = document.querySelectorAll('input[name="asisteRehabilitacion"]');
     const tieneDiagnosticoRadios = document.querySelectorAll('input[name="tieneDiagnostico"]');
+    const tieneEnfermedadActualRadios = document.querySelectorAll('input[name="tieneEnfermedadActual"]');
     const consumeMedicamentosRadios = document.querySelectorAll('input[name="consumeMedicamentos"]');
     const perteneceGrupoEtnicoRadios = document.querySelectorAll('input[name="perteneceGrupoEtnico"]');
     const ingresoSistemaEducativoRadios = document.querySelectorAll('input[name="ingresoSistemaEducativo"]');
@@ -32,6 +33,7 @@ const FormularioPIAR = (function() {
     const epsGroup = document.getElementById('epsGroup');
     const rehabilitacionDetails = document.getElementById('rehabilitacionDetails');
     const diagnosticoGroup = document.getElementById('diagnosticoGroup');
+    const enfermedadActualGroup = document.getElementById('enfermedadActualGroup');
     const medicamentosDetails = document.getElementById('medicamentosDetails');
     const grupoEtnicoGroup = document.getElementById('grupoEtnicoGroup');
     const historialEducativoDetails = document.getElementById('historialEducativoDetails');
@@ -158,12 +160,22 @@ const FormularioPIAR = (function() {
         input.value = input.value.replace(/[^0-9]/g, '');
     }
     
-    function _handleAfiliadoSaludChange() {
+    async function _handleAfiliadoSaludChange() {
         const selectedValue = document.querySelector('input[name="afiliadoSalud"]:checked')?.value;
         
         if (selectedValue === 'si') {
             epsGroup.style.display = 'block';
             document.getElementById('eps').required = true;
+            
+            try {
+                // Cargar EPS dinámicamente desde la API
+                const eps = await _fetchParametrizacion('eps');
+                _populateSelect('eps', eps);
+            } catch (error) {
+                console.error('Error cargando EPS:', error);
+                // Fallback con datos básicos en caso de error
+                _loadDummyEpsData();
+            }
         } else {
             epsGroup.style.display = 'none';
             document.getElementById('eps').required = false;
@@ -197,6 +209,19 @@ const FormularioPIAR = (function() {
             diagnosticoGroup.style.display = 'none';
             document.getElementById('diagnostico').required = false;
             document.getElementById('diagnostico').value = '';
+        }
+    }
+
+    function _handleTieneEnfermedadActualChange() {
+        const selectedValue = document.querySelector('input[name="tieneEnfermedadActual"]:checked')?.value;
+        
+        if (selectedValue === 'si') {
+            enfermedadActualGroup.style.display = 'block';
+            document.getElementById('enfermedadActual').required = true;
+        } else {
+            enfermedadActualGroup.style.display = 'none';
+            document.getElementById('enfermedadActual').required = false;
+            document.getElementById('enfermedadActual').value = '';
         }
     }
 
@@ -933,6 +958,18 @@ const FormularioPIAR = (function() {
         _populateSelect('ciudadPadre', dummyData.ciudades);
     }
     
+    function _loadDummyEpsData() {
+        // Datos dummy de EPS para cuando falla la conexión
+        const dummyEps = [
+            { id: 1, nombre: 'SURA' },
+            { id: 2, nombre: 'NUEVA EPS' },
+            { id: 3, nombre: 'SANITAS' },
+            { id: 4, nombre: 'FAMISANAR' },
+            { id: 5, nombre: 'COOMEVA' }
+        ];
+        _populateSelect('eps', dummyEps);
+    }
+    
     async function _fetchParametrizacion(tipo) {
         try {
             const response = await fetch(`http://localhost:3000/api/${tipo}`);
@@ -966,6 +1003,20 @@ const FormularioPIAR = (function() {
                 return result.data.map(item => ({
                     id: item.id_genero,
                     nombre: item.descripcion
+                }));
+            }
+            
+            if (tipo === 'eps') {
+                return result.data.map(item => ({
+                    id: item.id_eps,
+                    nombre: item.nombre
+                }));
+            }
+            
+            if (tipo === 'frecuencias-rehabilitacion') {
+                return result.data.map(item => ({
+                    id: item.id_frecuencia,
+                    nombre: item.nombre
                 }));
             }
             
@@ -1193,6 +1244,10 @@ const FormularioPIAR = (function() {
         
         tieneDiagnosticoRadios.forEach(radio => {
             radio.addEventListener('change', _handleTieneDiagnosticoChange);
+        });
+        
+        tieneEnfermedadActualRadios.forEach(radio => {
+            radio.addEventListener('change', _handleTieneEnfermedadActualChange);
         });
         
         consumeMedicamentosRadios.forEach(radio => {
