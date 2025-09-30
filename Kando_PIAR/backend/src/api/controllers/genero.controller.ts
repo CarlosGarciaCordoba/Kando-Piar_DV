@@ -9,9 +9,10 @@ export class GeneroController {
     static async getGeneros(req: Request, res: Response): Promise<void> {
         try {
             const query = `
-                SELECT id, nombre, codigo
+                SELECT id_genero, descripcion
                 FROM generos 
-                ORDER BY id ASC
+                WHERE estado = true
+                ORDER BY id_genero ASC
             `;
             
             const result = await pool.query(query);

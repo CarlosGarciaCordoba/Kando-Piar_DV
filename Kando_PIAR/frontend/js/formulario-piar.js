@@ -962,6 +962,13 @@ const FormularioPIAR = (function() {
                 }));
             }
             
+            if (tipo === 'generos') {
+                return result.data.map(item => ({
+                    id: item.id_genero,
+                    nombre: item.descripcion
+                }));
+            }
+            
             return result.data.map(item => ({
                 id: item.id,
                 nombre: item.nombre || item.descripcion

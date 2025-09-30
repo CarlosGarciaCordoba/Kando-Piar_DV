@@ -12,9 +12,10 @@ class GeneroController {
     static async getGeneros(req, res) {
         try {
             const query = `
-                SELECT id, nombre, codigo
+                SELECT id_genero, descripcion
                 FROM generos 
-                ORDER BY id ASC
+                WHERE estado = true
+                ORDER BY id_genero ASC
             `;
             const result = await database_1.default.query(query);
             res.json({
