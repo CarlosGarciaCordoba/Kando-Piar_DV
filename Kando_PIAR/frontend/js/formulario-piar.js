@@ -818,6 +818,14 @@ const FormularioPIAR = (function() {
             const frecuencias = await _fetchParametrizacion('frecuencias-rehabilitacion');
             _populateSelect('frecuenciaRehabilitacion', frecuencias);
             
+            // Cargar frecuencias de medicamentos
+            const frecuenciasMedicamentos = await _fetchParametrizacion('frecuencias-medicamentos');
+            _populateSelect('frecuenciaMedicamentos', frecuenciasMedicamentos);
+            
+            // Cargar horarios de medicamentos
+            const horariosMedicamentos = await _fetchParametrizacion('horarios-medicamentos');
+            _populateSelect('horarioMedicamentos', horariosMedicamentos);
+            
             // Cargar departamentos
             const departamentos = await _fetchParametrizacion('departamentos');
             _populateSelect('departamento', departamentos);
@@ -1016,6 +1024,20 @@ const FormularioPIAR = (function() {
             if (tipo === 'frecuencias-rehabilitacion') {
                 return result.data.map(item => ({
                     id: item.id_frecuencia,
+                    nombre: item.nombre
+                }));
+            }
+            
+            if (tipo === 'frecuencias-medicamentos') {
+                return result.data.map(item => ({
+                    id: item.id_frecuencia_medicamento,
+                    nombre: item.nombre
+                }));
+            }
+            
+            if (tipo === 'horarios-medicamentos') {
+                return result.data.map(item => ({
+                    id: item.id_horario_medicamento,
                     nombre: item.nombre
                 }));
             }

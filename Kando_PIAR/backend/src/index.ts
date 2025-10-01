@@ -9,6 +9,8 @@ import generoRoutes from './api/routes/genero.routes';
 import departamentoRoutes from './api/routes/departamento.routes';
 import epsRoutes from './api/routes/eps.routes';
 import frecuenciasRehabilitacionRoutes from './api/routes/frecuencias-rehabilitacion.routes';
+import frecuenciasMedicamentosRoutes from './api/routes/frecuencias-medicamentos.routes';
+import horariosMedicamentosRoutes from './api/routes/horarios-medicamentos.routes';
 import { errorHandler } from './middleware/errorHandler';
 
 dotenv.config();
@@ -36,6 +38,8 @@ app.use('/api/generos', generoRoutes);
 app.use('/api/departamentos', departamentoRoutes);
 app.use('/api/eps', epsRoutes);
 app.use('/api/frecuencias-rehabilitacion', frecuenciasRehabilitacionRoutes);
+app.use('/api/frecuencias-medicamentos', frecuenciasMedicamentosRoutes);
+app.use('/api/horarios-medicamentos', horariosMedicamentosRoutes);
 
 // Ruta de prueba
 app.get('/', (_req: Request, res: Response) => {
