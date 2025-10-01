@@ -428,6 +428,34 @@ CREATE TABLE frecuencias_rehabilitacion (
 );
 
 -- =============================================
+-- TABLA DE FRECUENCIAS DE MEDICAMENTOS
+-- =============================================
+-- Contiene las diferentes frecuencias de consumo de medicamentos
+-- =============================================
+CREATE TABLE frecuencias_medicamentos (
+    id_frecuencia_medicamento INTEGER PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL UNIQUE,
+    descripcion VARCHAR(200),
+    estado BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =============================================
+-- TABLA DE HORARIOS DE MEDICAMENTOS
+-- =============================================
+-- Contiene los diferentes horarios de administración de medicamentos
+-- =============================================
+CREATE TABLE horarios_medicamentos (
+    id_horario_medicamento INTEGER PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL UNIQUE,
+    descripcion VARCHAR(200),
+    estado BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =============================================
 -- ÍNDICES PARA OPTIMIZACIÓN
 -- =============================================
 CREATE INDEX idx_municipios_departamento ON municipios(id_departamento);
@@ -436,6 +464,8 @@ CREATE INDEX idx_departamentos_descripcion ON departamentos(descripcion);
 CREATE INDEX idx_generos_descripcion ON generos(descripcion);
 CREATE INDEX idx_eps_nombre ON eps(nombre);
 CREATE INDEX idx_frecuencias_rehabilitacion_nombre ON frecuencias_rehabilitacion(nombre);
+CREATE INDEX idx_frecuencias_medicamentos_nombre ON frecuencias_medicamentos(nombre);
+CREATE INDEX idx_horarios_medicamentos_nombre ON horarios_medicamentos(nombre);
 
 -- =============================================
 -- TRIGGERS PARA UPDATED_AT
@@ -463,10 +493,13 @@ CREATE TRIGGER update_eps_updated_at BEFORE UPDATE ON eps
 CREATE TRIGGER update_frecuencias_rehabilitacion_updated_at BEFORE UPDATE ON frecuencias_rehabilitacion
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_generos_updated_at BEFORE UPDATE ON generos
+CREATE TRIGGER update_frecuencias_medicamentos_updated_at BEFORE UPDATE ON frecuencias_medicamentos
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_eps_updated_at BEFORE UPDATE ON eps
+CREATE TRIGGER update_horarios_medicamentos_updated_at BEFORE UPDATE ON horarios_medicamentos
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_generos_updated_at BEFORE UPDATE ON generos
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- =============================================
