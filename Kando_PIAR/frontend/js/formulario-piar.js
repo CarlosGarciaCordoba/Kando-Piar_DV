@@ -830,6 +830,12 @@ const FormularioPIAR = (function() {
             const categoriasSIMAT = await _fetchParametrizacion('categorias-simat');
             _populateSelect('diagnostico', categoriasSIMAT);
             
+            // Cargar grupos étnicos
+            const gruposEtnicos = await _fetchParametrizacion('grupos-etnicos');
+            _populateSelect('grupoEtnico', gruposEtnicos);
+            _populateSelect('grupoEtnicoMadre', gruposEtnicos);
+            _populateSelect('grupoEtnicoPadre', gruposEtnicos);
+            
             // Cargar departamentos
             const departamentos = await _fetchParametrizacion('departamentos');
             _populateSelect('departamento', departamentos);
@@ -900,9 +906,12 @@ const FormularioPIAR = (function() {
             ],
             gruposEtnicos: [
                 { id: 1, nombre: 'Indígena' },
-                { id: 2, nombre: 'Afrodescendiente' },
-                { id: 3, nombre: 'ROM (Gitano)' },
-                { id: 4, nombre: 'Raizal' }
+                { id: 2, nombre: 'Negro, Mulato, Afrocolombiano o Afrodescendiente' },
+                { id: 3, nombre: 'Raizal del Archipiélago de San Andrés, Providencia y Santa Catalina' },
+                { id: 4, nombre: 'Palenquero de San Basilio' },
+                { id: 5, nombre: 'Rrom o Gitano' },
+                { id: 6, nombre: 'Ninguno de los anteriores' },
+                { id: 7, nombre: 'Otro' }
             ],
             establecimientos: [
                 { id: 1, nombre: 'IE San José' },
@@ -950,12 +959,12 @@ const FormularioPIAR = (function() {
         // _populateSelect('diagnostico', dummyData.diagnosticos); // Se carga desde API
         _populateSelect('frecuenciaMedicamentos', dummyData.frecuenciasMedicamentos);
         _populateSelectWithOther('horarioMedicamentos', dummyData.horariosMedicamentos);
-        _populateSelect('grupoEtnico', dummyData.gruposEtnicos);
+        _populateSelect('grupoEtnico', dummyData.gruposEtnicos); // Fallback si API falla
         _populateSelect('establecimientoEducativo', dummyData.establecimientos);
         
         // Cargar datos de la madre
         _populateSelect('tipoDocumentoMadre', dummyData.tiposDocumento);
-        _populateSelect('grupoEtnicoMadre', dummyData.gruposEtnicos);
+        _populateSelect('grupoEtnicoMadre', dummyData.gruposEtnicos); // Fallback si API falla
         _populateSelect('nivelEducativoMadre', dummyData.nivelesEducativos);
         _populateSelect('ingresosMadre', dummyData.ingresos);
         _populateSelect('departamentoMadre', dummyData.departamentos);
@@ -963,7 +972,7 @@ const FormularioPIAR = (function() {
         
         // Cargar datos del padre
         _populateSelect('tipoDocumentoPadre', dummyData.tiposDocumento);
-        _populateSelect('grupoEtnicoPadre', dummyData.gruposEtnicos);
+        _populateSelect('grupoEtnicoPadre', dummyData.gruposEtnicos); // Fallback si API falla
         _populateSelect('nivelEducativoPadre', dummyData.nivelesEducativos);
         _populateSelect('ingresosPadre', dummyData.ingresos);
         _populateSelect('departamentoPadre', dummyData.departamentos);
@@ -1137,6 +1146,59 @@ const FormularioPIAR = (function() {
         }
     }
     
+    function _handleGrupoEtnicoChange() {
+        const grupoEtnicoSelect = document.getElementById('grupoEtnico');
+        const grupoEtnicoOtroGroup = document.getElementById('grupoEtnicoOtroGroup');
+        
+        if (!grupoEtnicoSelect || !grupoEtnicoOtroGroup) return;
+        
+        // Verificar tanto por valor como por texto
+        const isOtro = grupoEtnicoSelect.value === '7' || 
+                      grupoEtnicoSelect.value === 7 ||
+                      grupoEtnicoSelect.options[grupoEtnicoSelect.selectedIndex]?.text === 'Otro';
+        
+        if (isOtro) {
+            grupoEtnicoOtroGroup.style.display = 'block';
+            document.getElementById('grupoEtnicoOtro').required = true;
+        } else {
+            grupoEtnicoOtroGroup.style.display = 'none';
+            document.getElementById('grupoEtnicoOtro').required = false;
+            document.getElementById('grupoEtnicoOtro').value = '';
+        }
+    }
+    
+    function _handleGrupoEtnicoMadreChange() {
+        const grupoEtnicoMadreSelect = document.getElementById('grupoEtnicoMadre');
+        const grupoEtnicoMadreOtroGroup = document.getElementById('grupoEtnicoMadreOtroGroup');
+        
+        if (!grupoEtnicoMadreSelect || !grupoEtnicoMadreOtroGroup) return;
+        
+        if (grupoEtnicoMadreSelect.value === '7') {
+            grupoEtnicoMadreOtroGroup.style.display = 'block';
+            document.getElementById('grupoEtnicoMadreOtro').required = true;
+        } else {
+            grupoEtnicoMadreOtroGroup.style.display = 'none';
+            document.getElementById('grupoEtnicoMadreOtro').required = false;
+            document.getElementById('grupoEtnicoMadreOtro').value = '';
+        }
+    }
+    
+    function _handleGrupoEtnicoPadreChange() {
+        const grupoEtnicoPadreSelect = document.getElementById('grupoEtnicoPadre');
+        const grupoEtnicoPadreOtroGroup = document.getElementById('grupoEtnicoPadreOtroGroup');
+        
+        if (!grupoEtnicoPadreSelect || !grupoEtnicoPadreOtroGroup) return;
+        
+        if (grupoEtnicoPadreSelect.value === '7') {
+            grupoEtnicoPadreOtroGroup.style.display = 'block';
+            document.getElementById('grupoEtnicoPadreOtro').required = true;
+        } else {
+            grupoEtnicoPadreOtroGroup.style.display = 'none';
+            document.getElementById('grupoEtnicoPadreOtro').required = false;
+            document.getElementById('grupoEtnicoPadreOtro').value = '';
+        }
+    }
+    
     async function _handleDepartamentoChange() {
         const departamentoId = departamentoSelect.value;
         
@@ -1254,8 +1316,14 @@ const FormularioPIAR = (function() {
             // Ocultar campos "Otro" condicionales
             const epsOtroGroup = document.getElementById('epsOtroGroup');
             const horarioMedicamentosOtroGroup = document.getElementById('horarioMedicamentosOtroGroup');
+            const grupoEtnicoOtroGroup = document.getElementById('grupoEtnicoOtroGroup');
+            const grupoEtnicoMadreOtroGroup = document.getElementById('grupoEtnicoMadreOtroGroup');
+            const grupoEtnicoPadreOtroGroup = document.getElementById('grupoEtnicoPadreOtroGroup');
             if (epsOtroGroup) epsOtroGroup.style.display = 'none';
             if (horarioMedicamentosOtroGroup) horarioMedicamentosOtroGroup.style.display = 'none';
+            if (grupoEtnicoOtroGroup) grupoEtnicoOtroGroup.style.display = 'none';
+            if (grupoEtnicoMadreOtroGroup) grupoEtnicoMadreOtroGroup.style.display = 'none';
+            if (grupoEtnicoPadreOtroGroup) grupoEtnicoPadreOtroGroup.style.display = 'none';
             historialEducativoDetails.style.display = 'none';
             historialEducativoDetails2.style.display = 'none';
             historialEducativoDetails3.style.display = 'none';
@@ -1364,6 +1432,22 @@ const FormularioPIAR = (function() {
         const horarioMedicamentosSelect = document.getElementById('horarioMedicamentos');
         if (horarioMedicamentosSelect) {
             horarioMedicamentosSelect.addEventListener('change', _handleHorarioMedicamentosChange);
+        }
+        
+        // Selects de Grupos Étnicos con opción "Otro"
+        const grupoEtnicoSelect = document.getElementById('grupoEtnico');
+        if (grupoEtnicoSelect) {
+            grupoEtnicoSelect.addEventListener('change', _handleGrupoEtnicoChange);
+        }
+        
+        const grupoEtnicoMadreSelect = document.getElementById('grupoEtnicoMadre');
+        if (grupoEtnicoMadreSelect) {
+            grupoEtnicoMadreSelect.addEventListener('change', _handleGrupoEtnicoMadreChange);
+        }
+        
+        const grupoEtnicoPadreSelect = document.getElementById('grupoEtnicoPadre');
+        if (grupoEtnicoPadreSelect) {
+            grupoEtnicoPadreSelect.addEventListener('change', _handleGrupoEtnicoPadreChange);
         }
         
         // Radio buttons condicionales de los padres

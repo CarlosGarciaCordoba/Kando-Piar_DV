@@ -12,6 +12,7 @@ import frecuenciasRehabilitacionRoutes from './api/routes/frecuencias-rehabilita
 import frecuenciasMedicamentosRoutes from './api/routes/frecuencias-medicamentos.routes';
 import horariosMedicamentosRoutes from './api/routes/horarios-medicamentos.routes';
 import categoriasSIMATRoutes from './api/routes/categorias-simat.routes';
+import gruposEtnicosRoutes from './api/routes/grupos-etnicos.routes';
 import { errorHandler } from './middleware/errorHandler';
 
 dotenv.config();
@@ -42,6 +43,7 @@ app.use('/api/frecuencias-rehabilitacion', frecuenciasRehabilitacionRoutes);
 app.use('/api/frecuencias-medicamentos', frecuenciasMedicamentosRoutes);
 app.use('/api/horarios-medicamentos', horariosMedicamentosRoutes);
 app.use('/api/categorias-simat', categoriasSIMATRoutes);
+app.use('/api/grupos-etnicos', gruposEtnicosRoutes);
 
 // Ruta de prueba
 app.get('/', (_req: Request, res: Response) => {

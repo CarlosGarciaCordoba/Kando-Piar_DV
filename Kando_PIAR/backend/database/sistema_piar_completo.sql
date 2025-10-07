@@ -470,6 +470,20 @@ CREATE TABLE categorias_simat (
 );
 
 -- =============================================
+-- TABLA DE GRUPOS ÉTNICOS
+-- =============================================
+-- Contiene los grupos étnicos reconocidos en Colombia
+-- =============================================
+CREATE TABLE grupos_etnicos (
+    id_grupo_etnico INTEGER PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
+    descripcion VARCHAR(200),
+    estado BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =============================================
 -- ÍNDICES PARA OPTIMIZACIÓN
 -- =============================================
 CREATE INDEX idx_municipios_departamento ON municipios(id_departamento);
@@ -481,6 +495,7 @@ CREATE INDEX idx_frecuencias_rehabilitacion_nombre ON frecuencias_rehabilitacion
 CREATE INDEX idx_frecuencias_medicamentos_nombre ON frecuencias_medicamentos(nombre);
 CREATE INDEX idx_horarios_medicamentos_nombre ON horarios_medicamentos(nombre);
 CREATE INDEX idx_categorias_simat_nombre ON categorias_simat(nombre);
+CREATE INDEX idx_grupos_etnicos_nombre ON grupos_etnicos(nombre);
 
 -- =============================================
 -- TRIGGERS PARA UPDATED_AT
@@ -515,6 +530,9 @@ CREATE TRIGGER update_horarios_medicamentos_updated_at BEFORE UPDATE ON horarios
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER update_categorias_simat_updated_at BEFORE UPDATE ON categorias_simat
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_grupos_etnicos_updated_at BEFORE UPDATE ON grupos_etnicos
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER update_generos_updated_at BEFORE UPDATE ON generos
