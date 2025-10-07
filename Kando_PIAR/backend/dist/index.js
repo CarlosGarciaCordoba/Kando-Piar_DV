@@ -12,6 +12,10 @@ const auth_routes_1 = __importDefault(require("./api/routes/auth.routes"));
 const tipos_documento_routes_1 = __importDefault(require("./api/routes/tipos-documento.routes"));
 const genero_routes_1 = __importDefault(require("./api/routes/genero.routes"));
 const departamento_routes_1 = __importDefault(require("./api/routes/departamento.routes"));
+const eps_routes_1 = __importDefault(require("./api/routes/eps.routes"));
+const frecuencias_rehabilitacion_routes_1 = __importDefault(require("./api/routes/frecuencias-rehabilitacion.routes"));
+const frecuencias_medicamentos_routes_1 = __importDefault(require("./api/routes/frecuencias-medicamentos.routes"));
+const horarios_medicamentos_routes_1 = __importDefault(require("./api/routes/horarios-medicamentos.routes"));
 const errorHandler_1 = require("./middleware/errorHandler");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
@@ -32,6 +36,10 @@ app.use('/api/auth', auth_routes_1.default);
 app.use('/api/tipos-documento', tipos_documento_routes_1.default);
 app.use('/api/generos', genero_routes_1.default);
 app.use('/api/departamentos', departamento_routes_1.default);
+app.use('/api/eps', eps_routes_1.default);
+app.use('/api/frecuencias-rehabilitacion', frecuencias_rehabilitacion_routes_1.default);
+app.use('/api/frecuencias-medicamentos', frecuencias_medicamentos_routes_1.default);
+app.use('/api/horarios-medicamentos', horarios_medicamentos_routes_1.default);
 // Ruta de prueba
 app.get('/', (_req, res) => {
     res.json({

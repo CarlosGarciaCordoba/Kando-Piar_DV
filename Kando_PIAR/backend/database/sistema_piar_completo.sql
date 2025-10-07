@@ -456,6 +456,20 @@ CREATE TABLE horarios_medicamentos (
 );
 
 -- =============================================
+-- TABLA DE CATEGORÍAS SIMAT
+-- =============================================
+-- Contiene las categorías de discapacidad del Sistema Integrado de Matrícula (SIMAT)
+-- =============================================
+CREATE TABLE categorias_simat (
+    id_categoria_simat INTEGER PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
+    descripcion VARCHAR(200),
+    estado BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =============================================
 -- ÍNDICES PARA OPTIMIZACIÓN
 -- =============================================
 CREATE INDEX idx_municipios_departamento ON municipios(id_departamento);
@@ -466,6 +480,7 @@ CREATE INDEX idx_eps_nombre ON eps(nombre);
 CREATE INDEX idx_frecuencias_rehabilitacion_nombre ON frecuencias_rehabilitacion(nombre);
 CREATE INDEX idx_frecuencias_medicamentos_nombre ON frecuencias_medicamentos(nombre);
 CREATE INDEX idx_horarios_medicamentos_nombre ON horarios_medicamentos(nombre);
+CREATE INDEX idx_categorias_simat_nombre ON categorias_simat(nombre);
 
 -- =============================================
 -- TRIGGERS PARA UPDATED_AT
@@ -497,6 +512,9 @@ CREATE TRIGGER update_frecuencias_medicamentos_updated_at BEFORE UPDATE ON frecu
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER update_horarios_medicamentos_updated_at BEFORE UPDATE ON horarios_medicamentos
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_categorias_simat_updated_at BEFORE UPDATE ON categorias_simat
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER update_generos_updated_at BEFORE UPDATE ON generos

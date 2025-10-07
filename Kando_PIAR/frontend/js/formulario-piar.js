@@ -170,7 +170,7 @@ const FormularioPIAR = (function() {
             try {
                 // Cargar EPS dinámicamente desde la API
                 const eps = await _fetchParametrizacion('eps');
-                _populateSelect('eps', eps);
+                _populateSelectWithOther('eps', eps);
             } catch (error) {
                 console.error('Error cargando EPS:', error);
                 // Fallback con datos básicos en caso de error
@@ -808,7 +808,7 @@ const FormularioPIAR = (function() {
             
             // Cargar EPS
             const eps = await _fetchParametrizacion('eps');
-            _populateSelect('eps', eps);
+            _populateSelectWithOther('eps', eps);
             
             // Cargar instituciones de rehabilitación
             const instituciones = await _fetchParametrizacion('instituciones-rehabilitacion');
@@ -824,7 +824,11 @@ const FormularioPIAR = (function() {
             
             // Cargar horarios de medicamentos
             const horariosMedicamentos = await _fetchParametrizacion('horarios-medicamentos');
-            _populateSelect('horarioMedicamentos', horariosMedicamentos);
+            _populateSelectWithOther('horarioMedicamentos', horariosMedicamentos);
+            
+            // Cargar categorías SIMAT
+            const categoriasSIMAT = await _fetchParametrizacion('categorias-simat');
+            _populateSelect('diagnostico', categoriasSIMAT);
             
             // Cargar departamentos
             const departamentos = await _fetchParametrizacion('departamentos');
@@ -937,15 +941,15 @@ const FormularioPIAR = (function() {
         _populateSelect('tipoDocumento', dummyData.tiposDocumento);
         _populateSelect('genero', dummyData.generos);
         _populateSelect('barrio', dummyData.barrios);
-        _populateSelect('eps', dummyData.eps);
+        _populateSelectWithOther('eps', dummyData.eps);
         _populateSelect('institucionRehabilitacion', dummyData.instituciones);
         _populateSelect('frecuenciaRehabilitacion', dummyData.frecuencias);
         _populateSelect('departamento', dummyData.departamentos);
         
         // Cargar nuevos datos del estudiante
-        _populateSelect('diagnostico', dummyData.diagnosticos);
+        // _populateSelect('diagnostico', dummyData.diagnosticos); // Se carga desde API
         _populateSelect('frecuenciaMedicamentos', dummyData.frecuenciasMedicamentos);
-        _populateSelect('horarioMedicamentos', dummyData.horariosMedicamentos);
+        _populateSelectWithOther('horarioMedicamentos', dummyData.horariosMedicamentos);
         _populateSelect('grupoEtnico', dummyData.gruposEtnicos);
         _populateSelect('establecimientoEducativo', dummyData.establecimientos);
         
@@ -975,7 +979,7 @@ const FormularioPIAR = (function() {
             { id: 4, nombre: 'FAMISANAR' },
             { id: 5, nombre: 'COOMEVA' }
         ];
-        _populateSelect('eps', dummyEps);
+        _populateSelectWithOther('eps', dummyEps);
     }
     
     async function _fetchParametrizacion(tipo) {
@@ -1075,6 +1079,62 @@ const FormularioPIAR = (function() {
             
             select.appendChild(option);
         });
+    }
+    
+    function _populateSelectWithOther(selectId, data) {
+        const select = document.getElementById(selectId);
+        if (!select) return;
+        
+        // Limpiar opciones existentes (excepto la primera)
+        while (select.children.length > 1) {
+            select.removeChild(select.lastChild);
+        }
+        
+        // Agregar opciones de datos
+        data.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.id;
+            option.textContent = item.nombre;
+            select.appendChild(option);
+        });
+        
+        // Agregar opción "Otro"
+        const otherOption = document.createElement('option');
+        otherOption.value = 'otro';
+        otherOption.textContent = 'Otro';
+        select.appendChild(otherOption);
+    }
+    
+    function _handleEpsChange() {
+        const epsSelect = document.getElementById('eps');
+        const epsOtroGroup = document.getElementById('epsOtroGroup');
+        
+        if (!epsSelect || !epsOtroGroup) return;
+        
+        if (epsSelect.value === 'otro') {
+            epsOtroGroup.style.display = 'block';
+            document.getElementById('epsOtro').required = true;
+        } else {
+            epsOtroGroup.style.display = 'none';
+            document.getElementById('epsOtro').required = false;
+            document.getElementById('epsOtro').value = '';
+        }
+    }
+    
+    function _handleHorarioMedicamentosChange() {
+        const horarioSelect = document.getElementById('horarioMedicamentos');
+        const horarioOtroGroup = document.getElementById('horarioMedicamentosOtroGroup');
+        
+        if (!horarioSelect || !horarioOtroGroup) return;
+        
+        if (horarioSelect.value === 'otro') {
+            horarioOtroGroup.style.display = 'block';
+            document.getElementById('horarioMedicamentosOtro').required = true;
+        } else {
+            horarioOtroGroup.style.display = 'none';
+            document.getElementById('horarioMedicamentosOtro').required = false;
+            document.getElementById('horarioMedicamentosOtro').value = '';
+        }
     }
     
     async function _handleDepartamentoChange() {
@@ -1190,6 +1250,12 @@ const FormularioPIAR = (function() {
             diagnosticoGroup.style.display = 'none';
             medicamentosDetails.style.display = 'none';
             grupoEtnicoGroup.style.display = 'none';
+            
+            // Ocultar campos "Otro" condicionales
+            const epsOtroGroup = document.getElementById('epsOtroGroup');
+            const horarioMedicamentosOtroGroup = document.getElementById('horarioMedicamentosOtroGroup');
+            if (epsOtroGroup) epsOtroGroup.style.display = 'none';
+            if (horarioMedicamentosOtroGroup) horarioMedicamentosOtroGroup.style.display = 'none';
             historialEducativoDetails.style.display = 'none';
             historialEducativoDetails2.style.display = 'none';
             historialEducativoDetails3.style.display = 'none';
@@ -1287,6 +1353,18 @@ const FormularioPIAR = (function() {
         jornadaRadios.forEach(radio => {
             radio.addEventListener('change', _handleJornadaChange);
         });
+        
+        // Select de EPS con opción "Otro"
+        const epsSelect = document.getElementById('eps');
+        if (epsSelect) {
+            epsSelect.addEventListener('change', _handleEpsChange);
+        }
+        
+        // Select de Horario Medicamentos con opción "Otro"
+        const horarioMedicamentosSelect = document.getElementById('horarioMedicamentos');
+        if (horarioMedicamentosSelect) {
+            horarioMedicamentosSelect.addEventListener('change', _handleHorarioMedicamentosChange);
+        }
         
         // Radio buttons condicionales de los padres
         perteneceGrupoEtnicoMadreRadios.forEach(radio => {
