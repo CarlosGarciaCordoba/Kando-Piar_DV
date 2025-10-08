@@ -13,6 +13,9 @@ import frecuenciasMedicamentosRoutes from './api/routes/frecuencias-medicamentos
 import horariosMedicamentosRoutes from './api/routes/horarios-medicamentos.routes';
 import categoriasSIMATRoutes from './api/routes/categorias-simat.routes';
 import gruposEtnicosRoutes from './api/routes/grupos-etnicos.routes';
+import colegiosRoutes from './api/routes/colegios.routes';
+import nivelesEducativosRoutes from './api/routes/niveles-educativos.routes';
+import ingresosPromediosMensualesRoutes from './api/routes/ingresos-promedios-mensuales.routes';
 import { errorHandler } from './middleware/errorHandler';
 
 dotenv.config();
@@ -44,6 +47,9 @@ app.use('/api/frecuencias-medicamentos', frecuenciasMedicamentosRoutes);
 app.use('/api/horarios-medicamentos', horariosMedicamentosRoutes);
 app.use('/api/categorias-simat', categoriasSIMATRoutes);
 app.use('/api/grupos-etnicos', gruposEtnicosRoutes);
+app.use('/api/colegios', colegiosRoutes);
+app.use('/api/niveles-educativos', nivelesEducativosRoutes);
+app.use('/api/ingresos-promedios-mensuales', ingresosPromediosMensualesRoutes);
 
 // Ruta de prueba
 app.get('/', (_req: Request, res: Response) => {

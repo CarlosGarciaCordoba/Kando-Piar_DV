@@ -484,6 +484,34 @@ CREATE TABLE grupos_etnicos (
 );
 
 -- =============================================
+-- TABLA DE NIVELES EDUCATIVOS
+-- =============================================
+-- Contiene los niveles educativos disponibles en Colombia
+-- =============================================
+CREATE TABLE niveles_educativos (
+    id_nivel_educativo INTEGER PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
+    descripcion VARCHAR(200),
+    estado BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =============================================
+-- TABLA DE INGRESOS PROMEDIOS MENSUALES
+-- =============================================
+-- Contiene los rangos de ingresos mensuales disponibles
+-- =============================================
+CREATE TABLE ingresos_promedios_mensuales (
+    id_ingreso INTEGER PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
+    descripcion VARCHAR(200),
+    estado BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =============================================
 -- ÍNDICES PARA OPTIMIZACIÓN
 -- =============================================
 CREATE INDEX idx_municipios_departamento ON municipios(id_departamento);
@@ -496,6 +524,8 @@ CREATE INDEX idx_frecuencias_medicamentos_nombre ON frecuencias_medicamentos(nom
 CREATE INDEX idx_horarios_medicamentos_nombre ON horarios_medicamentos(nombre);
 CREATE INDEX idx_categorias_simat_nombre ON categorias_simat(nombre);
 CREATE INDEX idx_grupos_etnicos_nombre ON grupos_etnicos(nombre);
+CREATE INDEX idx_niveles_educativos_nombre ON niveles_educativos(nombre);
+CREATE INDEX idx_ingresos_promedios_mensuales_nombre ON ingresos_promedios_mensuales(nombre);
 
 -- =============================================
 -- TRIGGERS PARA UPDATED_AT
@@ -533,6 +563,12 @@ CREATE TRIGGER update_categorias_simat_updated_at BEFORE UPDATE ON categorias_si
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER update_grupos_etnicos_updated_at BEFORE UPDATE ON grupos_etnicos
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_niveles_educativos_updated_at BEFORE UPDATE ON niveles_educativos
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_ingresos_promedios_mensuales_updated_at BEFORE UPDATE ON ingresos_promedios_mensuales
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER update_generos_updated_at BEFORE UPDATE ON generos

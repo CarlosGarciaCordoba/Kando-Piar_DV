@@ -842,6 +842,21 @@ const FormularioPIAR = (function() {
             _populateSelect('departamentoMadre', departamentos);
             _populateSelect('departamentoPadre', departamentos);
             
+            // Cargar colegios
+            const colegios = await _fetchParametrizacion('colegios');
+            _populateSelectWithOther('establecimientoEducativo', colegios);
+            
+            // Cargar niveles educativos
+            const nivelesEducativos = await _fetchParametrizacion('niveles-educativos');
+            _populateSelect('nivelEducativoMadre', nivelesEducativos);
+            _populateSelect('nivelEducativoPadre', nivelesEducativos);
+            
+            // Cargar ingresos promedios mensuales
+            const ingresosPromediosMensuales = await _fetchParametrizacion('ingresos-promedios-mensuales');
+            _populateSelect('ingresosMadre', ingresosPromediosMensuales);
+            _populateSelect('ingresosPadre', ingresosPromediosMensuales);
+            _populateSelect('promedioIngresos', ingresosPromediosMensuales);
+            
         } catch (error) {
             console.error('Error cargando datos de parametrización:', error);
             // Cargar datos dummy en caso de error
@@ -916,27 +931,30 @@ const FormularioPIAR = (function() {
             establecimientos: [
                 { id: 1, nombre: 'IE San José' },
                 { id: 2, nombre: 'IE La Presentación' },
-                { id: 3, nombre: 'IE Técnico Industrial' }
+                { id: 3, nombre: 'IE Técnico Industrial' },
+                { id: 7, nombre: 'Otro' }
             ],
             nivelesEducativos: [
-                { id: 1, nombre: 'Sin educación formal' },
-                { id: 2, nombre: 'Primaria incompleta' },
-                { id: 3, nombre: 'Primaria completa' },
-                { id: 4, nombre: 'Secundaria incompleta' },
-                { id: 5, nombre: 'Secundaria completa' },
-                { id: 6, nombre: 'Técnico' },
-                { id: 7, nombre: 'Tecnológico' },
-                { id: 8, nombre: 'Universitario' },
-                { id: 9, nombre: 'Especialización' },
-                { id: 10, nombre: 'Maestría' },
-                { id: 11, nombre: 'Doctorado' }
+                { id: 1, nombre: 'Preescolar' },
+                { id: 2, nombre: 'Básica Primaria' },
+                { id: 3, nombre: 'Básica Secundaria' },
+                { id: 4, nombre: 'Media Académica' },
+                { id: 5, nombre: 'Técnico Laboral' },
+                { id: 6, nombre: 'Tecnólogo' },
+                { id: 7, nombre: 'Educación Superior - Pregrado / Profesional' },
+                { id: 8, nombre: 'Especialización' },
+                { id: 9, nombre: 'Maestría' },
+                { id: 10, nombre: 'Doctorado' },
+                { id: 11, nombre: 'Posdoctorado' },
+                { id: 12, nombre: 'Ninguno' }
             ],
             ingresos: [
-                { id: 1, nombre: 'Menos de 1 SMMLV' },
-                { id: 2, nombre: '1 SMMLV' },
-                { id: 3, nombre: '2 SMMLV' },
-                { id: 4, nombre: '3 SMMLV' },
-                { id: 5, nombre: 'Más de 3 SMMLV' }
+                { id: 1, nombre: 'Sin ingresos' },
+                { id: 2, nombre: 'Menos de 1 salario mínimo' },
+                { id: 3, nombre: 'De 1 a menos de 2 SMMLV' },
+                { id: 4, nombre: 'De 2 a menos de 3 SMMLV' },
+                { id: 5, nombre: 'De 3 a menos de 5 SMMLV' },
+                { id: 6, nombre: 'Más de 5 SMMLV' }
             ],
             ciudades: [
                 { id: 1, nombre: 'Bucaramanga' },
@@ -960,7 +978,7 @@ const FormularioPIAR = (function() {
         _populateSelect('frecuenciaMedicamentos', dummyData.frecuenciasMedicamentos);
         _populateSelectWithOther('horarioMedicamentos', dummyData.horariosMedicamentos);
         _populateSelect('grupoEtnico', dummyData.gruposEtnicos); // Fallback si API falla
-        _populateSelect('establecimientoEducativo', dummyData.establecimientos);
+        _populateSelectWithOther('establecimientoEducativo', dummyData.establecimientos);
         
         // Cargar datos de la madre
         _populateSelect('tipoDocumentoMadre', dummyData.tiposDocumento);
@@ -977,6 +995,9 @@ const FormularioPIAR = (function() {
         _populateSelect('ingresosPadre', dummyData.ingresos);
         _populateSelect('departamentoPadre', dummyData.departamentos);
         _populateSelect('ciudadPadre', dummyData.ciudades);
+        
+        // Cargar ingresos de la familia
+        _populateSelect('promedioIngresos', dummyData.ingresos);
     }
     
     function _loadDummyEpsData() {
@@ -1143,6 +1164,27 @@ const FormularioPIAR = (function() {
             horarioOtroGroup.style.display = 'none';
             document.getElementById('horarioMedicamentosOtro').required = false;
             document.getElementById('horarioMedicamentosOtro').value = '';
+        }
+    }
+    
+    function _handleEstablecimientoEducativoChange() {
+        const establecimientoSelect = document.getElementById('establecimientoEducativo');
+        const establecimientoOtroGroup = document.getElementById('establecimientoEducativoOtroGroup');
+        
+        if (!establecimientoSelect || !establecimientoOtroGroup) return;
+        
+        // Verificar tanto por valor como por texto
+        const isOtro = establecimientoSelect.value === '7' || 
+                      establecimientoSelect.value === 7 ||
+                      establecimientoSelect.options[establecimientoSelect.selectedIndex]?.text === 'Otro';
+        
+        if (isOtro) {
+            establecimientoOtroGroup.style.display = 'block';
+            document.getElementById('establecimientoEducativoOtro').required = true;
+        } else {
+            establecimientoOtroGroup.style.display = 'none';
+            document.getElementById('establecimientoEducativoOtro').required = false;
+            document.getElementById('establecimientoEducativoOtro').value = '';
         }
     }
     
@@ -1432,6 +1474,12 @@ const FormularioPIAR = (function() {
         const horarioMedicamentosSelect = document.getElementById('horarioMedicamentos');
         if (horarioMedicamentosSelect) {
             horarioMedicamentosSelect.addEventListener('change', _handleHorarioMedicamentosChange);
+        }
+        
+        // Select de Establecimiento Educativo con opción "Otro"
+        const establecimientoEducativoSelect = document.getElementById('establecimientoEducativo');
+        if (establecimientoEducativoSelect) {
+            establecimientoEducativoSelect.addEventListener('change', _handleEstablecimientoEducativoChange);
         }
         
         // Selects de Grupos Étnicos con opción "Otro"
