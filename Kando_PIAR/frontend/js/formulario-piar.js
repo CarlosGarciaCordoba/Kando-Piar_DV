@@ -1070,12 +1070,6 @@ const FormularioPIAR = (function() {
                 { id: 6, nombre: 'Primo/a' },
                 { id: 7, nombre: 'Amigo/a de la familia' },
                 { id: 8, nombre: 'Vecino/a' }
-            ],
-            ciudades: [
-                { id: 1, nombre: 'Bucaramanga' },
-                { id: 2, nombre: 'Floridablanca' },
-                { id: 3, nombre: 'Girón' },
-                { id: 4, nombre: 'Piedecuesta' }
             ]
         };
         
@@ -1102,7 +1096,6 @@ const FormularioPIAR = (function() {
         _populateSelect('nivelEducativoMadre', dummyData.nivelesEducativos);
         _populateSelect('ingresosMadre', dummyData.ingresos);
         _populateSelect('departamentoMadre', dummyData.departamentos);
-        _populateSelect('ciudadMadre', dummyData.ciudades);
         
         // Cargar datos del padre
         _populateSelect('tipoDocumentoPadre', dummyData.tiposDocumento);
@@ -1111,7 +1104,6 @@ const FormularioPIAR = (function() {
         _populateSelect('nivelEducativoPadre', dummyData.nivelesEducativos);
         _populateSelect('ingresosPadre', dummyData.ingresos);
         _populateSelect('departamentoPadre', dummyData.departamentos);
-        _populateSelect('ciudadPadre', dummyData.ciudades);
         
         // Cargar ingresos de la familia
         _populateSelect('promedioIngresos', dummyData.ingresos);
