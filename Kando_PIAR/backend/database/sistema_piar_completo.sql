@@ -1858,6 +1858,44 @@ INSERT INTO municipios (id_municipio, id_departamento, descripcion) VALUES
 -- 8. Restricciones de integridad
 -- 9. Datos iniciales para tipos de documento
 
+-- =============================================
+-- TABLA RELACIONES CON EL ESTUDIANTE
+-- Parametrización para relaciones familiares y de apoyo
+-- =============================================
+CREATE TABLE relaciones_estudiante (
+    id_relacion INTEGER PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
+    descripcion VARCHAR(200),
+    estado BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =============================================
+-- ÍNDICES PARA TABLA RELACIONES ESTUDIANTE
+-- =============================================
+CREATE INDEX idx_relaciones_estudiante_nombre ON relaciones_estudiante(nombre);
+
+-- =============================================
+-- TRIGGER PARA TABLA RELACIONES ESTUDIANTE
+-- =============================================
+CREATE TRIGGER update_relaciones_estudiante_updated_at 
+    BEFORE UPDATE ON relaciones_estudiante
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- =============================================
+-- DATOS INICIALES - RELACIONES CON EL ESTUDIANTE
+-- =============================================
+INSERT INTO relaciones_estudiante (id_relacion, nombre, descripcion, estado) VALUES 
+(1, 'Madre', 'Madre del estudiante', true),
+(2, 'Padre', 'Padre del estudiante', true),
+(3, 'Abuelo/a', 'Abuelo o abuela del estudiante', true),
+(4, 'Hermano/a', 'Hermano o hermana del estudiante', true),
+(5, 'Tío/a', 'Tío o tía del estudiante', true),
+(6, 'Primo/a', 'Primo o prima del estudiante', true),
+(7, 'Amigo/a de la familia', 'Amigo o amiga de la familia', true),
+(8, 'Vecino/a', 'Vecino o vecina', true);
+
 -- PARAMETRIZACIONES FUTURAS:
 -- Se implementarán gradualmente según las necesidades del proyecto:
 -- - Departamentos y municipios (ubicación geográfica)

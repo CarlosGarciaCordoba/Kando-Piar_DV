@@ -3,6 +3,7 @@ const FormularioPIAR = (function() {
     
     // Variables privadas
     let userData = null;
+    let dataCache = null;
     
     // Elementos del DOM
     const enableFormBtn = document.getElementById('enableFormBtn');
@@ -452,6 +453,13 @@ const FormularioPIAR = (function() {
                             <option value="">Seleccione...</option>
                         </select>
                     </div>
+                    <div class="form-group" id="otroConQuienVive${compositionCounter}Group" style="display: none;">
+                        <label for="otroConQuienVive${compositionCounter}">¿Con quién?</label>
+                        <input type="text" id="otroConQuienVive${compositionCounter}" name="otroConQuienVive${compositionCounter}" maxlength="100" placeholder="Especifique con quién vive">
+                    </div>
+                </div>
+                
+                <div class="form-row">
                     <div class="form-group">
                         <label for="nombrePersona${compositionCounter}">Nombre completo:</label>
                         <input type="text" id="nombrePersona${compositionCounter}" name="nombrePersona${compositionCounter}" maxlength="150">
@@ -463,15 +471,15 @@ const FormularioPIAR = (function() {
                         <label for="relacionEstudiante${compositionCounter}">Relación con el estudiante:</label>
                         <select id="relacionEstudiante${compositionCounter}" name="relacionEstudiante${compositionCounter}">
                             <option value="">Seleccione...</option>
-                            <option value="madre">Madre</option>
-                            <option value="padre">Padre</option>
-                            <option value="abuelo">Abuelo/a</option>
-                            <option value="hermano">Hermano/a</option>
-                            <option value="tio">Tío/a</option>
-                            <option value="primo">Primo/a</option>
-                            <option value="otro">Otro</option>
                         </select>
                     </div>
+                    <div class="form-group" id="otroRelacionEstudiante${compositionCounter}Group" style="display: none;">
+                        <label for="otroRelacionEstudiante${compositionCounter}">¿Con quién?</label>
+                        <input type="text" id="otroRelacionEstudiante${compositionCounter}" name="otroRelacionEstudiante${compositionCounter}" maxlength="100" placeholder="Especifique la relación">
+                    </div>
+                </div>
+                
+                <div class="form-row">
                     <div class="form-group">
                         <label for="generoPersona${compositionCounter}">Género:</label>
                         <select id="generoPersona${compositionCounter}" name="generoPersona${compositionCounter}">
@@ -522,6 +530,34 @@ const FormularioPIAR = (function() {
             selectEdad.appendChild(option);
         }
         
+        // Poblar selects con datos de la API o datos dummy
+        const relacionesData = dataCache?.relacionesEstudiante || [
+            { id: 1, nombre: 'Madre' },
+            { id: 2, nombre: 'Padre' },
+            { id: 3, nombre: 'Abuelo/a' },
+            { id: 4, nombre: 'Hermano/a' },
+            { id: 5, nombre: 'Tío/a' },
+            { id: 6, nombre: 'Primo/a' },
+            { id: 7, nombre: 'Amigo/a de la familia' },
+            { id: 8, nombre: 'Vecino/a' }
+        ];
+        
+        _populateSelectWithOther(`conQuienVive${compositionCounter}`, relacionesData);
+        _populateSelectWithOther(`relacionEstudiante${compositionCounter}`, relacionesData);
+        
+        // Configurar event listeners para campos condicionales
+        const conQuienViveSelect = document.getElementById(`conQuienVive${compositionCounter}`);
+        if (conQuienViveSelect) {
+            conQuienViveSelect.addEventListener('change', () => 
+                _handleSelectWithOther(`conQuienVive${compositionCounter}`, `otroConQuienVive${compositionCounter}Group`));
+        }
+        
+        const relacionEstudianteSelect = document.getElementById(`relacionEstudiante${compositionCounter}`);
+        if (relacionEstudianteSelect) {
+            relacionEstudianteSelect.addEventListener('change', () => 
+                _handleSelectWithOther(`relacionEstudiante${compositionCounter}`, `otroRelacionEstudiante${compositionCounter}Group`));
+        }
+        
         // Ocultar botón si se alcanza el máximo
         if (compositionCounter >= maxCompositions) {
             document.getElementById('addCompositionBtn').style.display = 'none';
@@ -564,16 +600,11 @@ const FormularioPIAR = (function() {
                         <label for="relacionApoyo${supportCounter}">Relación con el estudiante:</label>
                         <select id="relacionApoyo${supportCounter}" name="relacionApoyo${supportCounter}">
                             <option value="">Seleccione...</option>
-                            <option value="madre">Madre</option>
-                            <option value="padre">Padre</option>
-                            <option value="abuelo">Abuelo/a</option>
-                            <option value="hermano">Hermano/a</option>
-                            <option value="tio">Tío/a</option>
-                            <option value="primo">Primo/a</option>
-                            <option value="amigo">Amigo/a de la familia</option>
-                            <option value="vecino">Vecino/a</option>
-                            <option value="otro">Otro</option>
                         </select>
+                        <div class="form-group" id="otroRelacionApoyo${supportCounter}Group" style="display: none; margin-top: 10px;">
+                            <label for="otroRelacionApoyo${supportCounter}">¿Cuál?</label>
+                            <input type="text" id="otroRelacionApoyo${supportCounter}" name="otroRelacionApoyo${supportCounter}" maxlength="100">
+                        </div>
                     </div>
                 </div>
                 
@@ -626,6 +657,27 @@ const FormularioPIAR = (function() {
             option.value = i;
             option.textContent = i + ' años';
             selectEdad.appendChild(option);
+        }
+        
+        // Poblar select de relación con datos de la API o datos dummy
+        const relacionesData = dataCache?.relacionesEstudiante || [
+            { id: 1, nombre: 'Madre' },
+            { id: 2, nombre: 'Padre' },
+            { id: 3, nombre: 'Abuelo/a' },
+            { id: 4, nombre: 'Hermano/a' },
+            { id: 5, nombre: 'Tío/a' },
+            { id: 6, nombre: 'Primo/a' },
+            { id: 7, nombre: 'Amigo/a de la familia' },
+            { id: 8, nombre: 'Vecino/a' }
+        ];
+        
+        _populateSelectWithOther(`relacionApoyo${supportCounter}`, relacionesData);
+        
+        // Configurar event listener para campo condicional
+        const relacionApoyoSelect = document.getElementById(`relacionApoyo${supportCounter}`);
+        if (relacionApoyoSelect) {
+            relacionApoyoSelect.addEventListener('change', () => 
+                _handleSelectWithOther(`relacionApoyo${supportCounter}`, `otroRelacionApoyo${supportCounter}Group`));
         }
         
         // Ocultar botón si se alcanza el máximo
@@ -682,7 +734,12 @@ const FormularioPIAR = (function() {
         const group = document.getElementById(groupId);
         
         if (select && group) {
-            if (select.value === 'otro' || select.value === 'otros') {
+            // Verificar si se seleccionó "Otro" (puede ser por valor de texto o ID numérico)
+            const selectedValue = select.value.toLowerCase();
+            const selectedText = select.options[select.selectedIndex]?.text?.toLowerCase() || '';
+            
+            if (selectedValue === 'otro' || selectedValue === 'otros' || selectedValue === '9' || 
+                selectedText.includes('otro')) {
                 group.style.display = 'block';
             } else {
                 group.style.display = 'none';
@@ -857,6 +914,17 @@ const FormularioPIAR = (function() {
             _populateSelect('ingresosPadre', ingresosPromediosMensuales);
             _populateSelect('promedioIngresos', ingresosPromediosMensuales);
             
+            // Cargar relaciones con el estudiante
+            const relacionesEstudiante = await _fetchParametrizacion('relaciones-estudiante');
+            _populateSelectWithOther('conQuienVive1', relacionesEstudiante);
+            _populateSelectWithOther('relacionEstudiante1', relacionesEstudiante);
+            _populateSelectWithOther('relacionApoyo1', relacionesEstudiante);
+            
+            // Guardar datos en cache para uso en campos dinámicos
+            dataCache = {
+                relacionesEstudiante: relacionesEstudiante
+            };
+            
         } catch (error) {
             console.error('Error cargando datos de parametrización:', error);
             // Cargar datos dummy en caso de error
@@ -956,6 +1024,16 @@ const FormularioPIAR = (function() {
                 { id: 5, nombre: 'De 3 a menos de 5 SMMLV' },
                 { id: 6, nombre: 'Más de 5 SMMLV' }
             ],
+            relacionesEstudiante: [
+                { id: 1, nombre: 'Madre' },
+                { id: 2, nombre: 'Padre' },
+                { id: 3, nombre: 'Abuelo/a' },
+                { id: 4, nombre: 'Hermano/a' },
+                { id: 5, nombre: 'Tío/a' },
+                { id: 6, nombre: 'Primo/a' },
+                { id: 7, nombre: 'Amigo/a de la familia' },
+                { id: 8, nombre: 'Vecino/a' }
+            ],
             ciudades: [
                 { id: 1, nombre: 'Bucaramanga' },
                 { id: 2, nombre: 'Floridablanca' },
@@ -998,6 +1076,16 @@ const FormularioPIAR = (function() {
         
         // Cargar ingresos de la familia
         _populateSelect('promedioIngresos', dummyData.ingresos);
+        
+        // Cargar relaciones con el estudiante
+        _populateSelectWithOther('conQuienVive1', dummyData.relacionesEstudiante);
+        _populateSelectWithOther('relacionEstudiante1', dummyData.relacionesEstudiante);
+        _populateSelectWithOther('relacionApoyo1', dummyData.relacionesEstudiante);
+        
+        // Guardar datos dummy en cache para uso en campos dinámicos
+        dataCache = {
+            relacionesEstudiante: dummyData.relacionesEstudiante
+        };
     }
     
     function _loadDummyEpsData() {
@@ -1538,6 +1626,27 @@ const FormularioPIAR = (function() {
         if (dondeDormia) {
             dondeDormia.addEventListener('change', () => 
                 _handleSelectWithOther('dondeDormia', 'otroDondeDormiaGroup'));
+        }
+        
+        // Event listener para el campo "¿Con quién vive el estudiante en la actualidad?"
+        const conQuienVive1 = document.getElementById('conQuienVive1');
+        if (conQuienVive1) {
+            conQuienVive1.addEventListener('change', () => 
+                _handleSelectWithOther('conQuienVive1', 'otroConQuienVive1Group'));
+        }
+        
+        // Event listener para el campo "Relación con el estudiante" en composición familiar
+        const relacionEstudiante1 = document.getElementById('relacionEstudiante1');
+        if (relacionEstudiante1) {
+            relacionEstudiante1.addEventListener('change', () => 
+                _handleSelectWithOther('relacionEstudiante1', 'otroRelacionEstudiante1Group'));
+        }
+        
+        // Event listener para el campo "Relación con el estudiante" en figuras de apoyo
+        const relacionApoyo1 = document.getElementById('relacionApoyo1');
+        if (relacionApoyo1) {
+            relacionApoyo1.addEventListener('change', () => 
+                _handleSelectWithOther('relacionApoyo1', 'otroRelacionApoyo1Group'));
         }
         
         const comoSeCalmaba = document.getElementById('comoSeCalmaba');

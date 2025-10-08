@@ -16,6 +16,7 @@ import gruposEtnicosRoutes from './api/routes/grupos-etnicos.routes';
 import colegiosRoutes from './api/routes/colegios.routes';
 import nivelesEducativosRoutes from './api/routes/niveles-educativos.routes';
 import ingresosPromediosMensualesRoutes from './api/routes/ingresos-promedios-mensuales.routes';
+import relacionesEstudianteRoutes from './api/routes/relaciones-estudiante.routes';
 import { errorHandler } from './middleware/errorHandler';
 
 dotenv.config();
@@ -50,6 +51,7 @@ app.use('/api/grupos-etnicos', gruposEtnicosRoutes);
 app.use('/api/colegios', colegiosRoutes);
 app.use('/api/niveles-educativos', nivelesEducativosRoutes);
 app.use('/api/ingresos-promedios-mensuales', ingresosPromediosMensualesRoutes);
+app.use('/api/relaciones-estudiante', relacionesEstudianteRoutes);
 
 // Ruta de prueba
 app.get('/', (_req: Request, res: Response) => {
