@@ -332,23 +332,59 @@ const FormularioPIAR = (function() {
 
     function _handlePerteneceGrupoEtnicoMadreChange() {
         const selectedValue = document.querySelector('input[name="perteneceGrupoEtnicoMadre"]:checked')?.value;
+        const grupoEtnicoMadreGroup = document.getElementById('grupoEtnicoMadreGroup');
+        const grupoEtnicoMadreOtroGroup = document.getElementById('grupoEtnicoMadreOtroGroup');
+        
+        console.log('_handlePerteneceGrupoEtnicoMadreChange ejecutado:', selectedValue);
+        console.log('grupoEtnicoMadreGroup encontrado:', !!grupoEtnicoMadreGroup);
         
         if (selectedValue === 'si') {
-            grupoEtnicoMadreGroup.style.display = 'block';
+            if (grupoEtnicoMadreGroup) {
+                grupoEtnicoMadreGroup.style.display = 'block';
+                console.log('Mostrando select grupo étnico madre');
+            }
         } else {
-            grupoEtnicoMadreGroup.style.display = 'none';
-            document.getElementById('grupoEtnicoMadre').value = '';
+            if (grupoEtnicoMadreGroup) {
+                grupoEtnicoMadreGroup.style.display = 'none';
+                console.log('Ocultando select grupo étnico madre');
+            }
+            if (grupoEtnicoMadreOtroGroup) {
+                grupoEtnicoMadreOtroGroup.style.display = 'none';
+                console.log('Ocultando campo otro grupo étnico madre');
+            }
+            const selectMadre = document.getElementById('grupoEtnicoMadre');
+            const inputMadre = document.getElementById('grupoEtnicoMadreOtro');
+            if (selectMadre) selectMadre.value = '';
+            if (inputMadre) inputMadre.value = '';
         }
     }
 
     function _handlePerteneceGrupoEtnicoPadreChange() {
         const selectedValue = document.querySelector('input[name="perteneceGrupoEtnicoPadre"]:checked')?.value;
+        const grupoEtnicoPadreGroup = document.getElementById('grupoEtnicoPadreGroup');
+        const grupoEtnicoPadreOtroGroup = document.getElementById('grupoEtnicoPadreOtroGroup');
+        
+        console.log('_handlePerteneceGrupoEtnicoPadreChange ejecutado:', selectedValue);
+        console.log('grupoEtnicoPadreGroup encontrado:', !!grupoEtnicoPadreGroup);
         
         if (selectedValue === 'si') {
-            grupoEtnicoPadreGroup.style.display = 'block';
+            if (grupoEtnicoPadreGroup) {
+                grupoEtnicoPadreGroup.style.display = 'block';
+                console.log('Mostrando select grupo étnico padre');
+            }
         } else {
-            grupoEtnicoPadreGroup.style.display = 'none';
-            document.getElementById('grupoEtnicoPadre').value = '';
+            if (grupoEtnicoPadreGroup) {
+                grupoEtnicoPadreGroup.style.display = 'none';
+                console.log('Ocultando select grupo étnico padre');
+            }
+            if (grupoEtnicoPadreOtroGroup) {
+                grupoEtnicoPadreOtroGroup.style.display = 'none';
+                console.log('Ocultando campo otro grupo étnico padre');
+            }
+            const selectPadre = document.getElementById('grupoEtnicoPadre');
+            const inputPadre = document.getElementById('grupoEtnicoPadreOtro');
+            if (selectPadre) selectPadre.value = '';
+            if (inputPadre) inputPadre.value = '';
         }
     }
 
@@ -889,6 +925,7 @@ const FormularioPIAR = (function() {
             
             // Cargar grupos étnicos
             const gruposEtnicos = await _fetchParametrizacion('grupos-etnicos');
+            console.log('Grupos étnicos cargados desde API:', gruposEtnicos);
             _populateSelect('grupoEtnico', gruposEtnicos);
             _populateSelect('grupoEtnicoMadre', gruposEtnicos);
             _populateSelect('grupoEtnicoPadre', gruposEtnicos);
@@ -1060,6 +1097,7 @@ const FormularioPIAR = (function() {
         
         // Cargar datos de la madre
         _populateSelect('tipoDocumentoMadre', dummyData.tiposDocumento);
+        console.log('Cargando grupos étnicos dummy para madre:', dummyData.gruposEtnicos);
         _populateSelect('grupoEtnicoMadre', dummyData.gruposEtnicos); // Fallback si API falla
         _populateSelect('nivelEducativoMadre', dummyData.nivelesEducativos);
         _populateSelect('ingresosMadre', dummyData.ingresos);
@@ -1068,6 +1106,7 @@ const FormularioPIAR = (function() {
         
         // Cargar datos del padre
         _populateSelect('tipoDocumentoPadre', dummyData.tiposDocumento);
+        console.log('Cargando grupos étnicos dummy para padre:', dummyData.gruposEtnicos);
         _populateSelect('grupoEtnicoPadre', dummyData.gruposEtnicos); // Fallback si API falla
         _populateSelect('nivelEducativoPadre', dummyData.nivelesEducativos);
         _populateSelect('ingresosPadre', dummyData.ingresos);
@@ -1301,12 +1340,23 @@ const FormularioPIAR = (function() {
         const grupoEtnicoMadreSelect = document.getElementById('grupoEtnicoMadre');
         const grupoEtnicoMadreOtroGroup = document.getElementById('grupoEtnicoMadreOtroGroup');
         
+        console.log('_handleGrupoEtnicoMadreChange ejecutado');
+        console.log('Valor seleccionado:', grupoEtnicoMadreSelect?.value);
+        console.log('Elemento grupoEtnicoMadreOtroGroup encontrado:', !!grupoEtnicoMadreOtroGroup);
+        
         if (!grupoEtnicoMadreSelect || !grupoEtnicoMadreOtroGroup) return;
         
-        if (grupoEtnicoMadreSelect.value === '7') {
+        // Verificar si se seleccionó "Otro" (por ID o por texto)
+        const selectedValue = grupoEtnicoMadreSelect.value;
+        const selectedText = grupoEtnicoMadreSelect.options[grupoEtnicoMadreSelect.selectedIndex]?.text?.toLowerCase() || '';
+        const isOtro = selectedValue === '7' || selectedValue === 'otro' || selectedText.includes('otro');
+        
+        if (isOtro) {
+            console.log('Mostrando campo "Indique otro" para madre');
             grupoEtnicoMadreOtroGroup.style.display = 'block';
             document.getElementById('grupoEtnicoMadreOtro').required = true;
         } else {
+            console.log('Ocultando campo "Indique otro" para madre');
             grupoEtnicoMadreOtroGroup.style.display = 'none';
             document.getElementById('grupoEtnicoMadreOtro').required = false;
             document.getElementById('grupoEtnicoMadreOtro').value = '';
@@ -1317,12 +1367,23 @@ const FormularioPIAR = (function() {
         const grupoEtnicoPadreSelect = document.getElementById('grupoEtnicoPadre');
         const grupoEtnicoPadreOtroGroup = document.getElementById('grupoEtnicoPadreOtroGroup');
         
+        console.log('_handleGrupoEtnicoPadreChange ejecutado');
+        console.log('Valor seleccionado:', grupoEtnicoPadreSelect?.value);
+        console.log('Elemento grupoEtnicoPadreOtroGroup encontrado:', !!grupoEtnicoPadreOtroGroup);
+        
         if (!grupoEtnicoPadreSelect || !grupoEtnicoPadreOtroGroup) return;
         
-        if (grupoEtnicoPadreSelect.value === '7') {
+        // Verificar si se seleccionó "Otro" (por ID o por texto)
+        const selectedValue = grupoEtnicoPadreSelect.value;
+        const selectedText = grupoEtnicoPadreSelect.options[grupoEtnicoPadreSelect.selectedIndex]?.text?.toLowerCase() || '';
+        const isOtro = selectedValue === '7' || selectedValue === 'otro' || selectedText.includes('otro');
+        
+        if (isOtro) {
+            console.log('Mostrando campo "Indique otro" para padre');
             grupoEtnicoPadreOtroGroup.style.display = 'block';
             document.getElementById('grupoEtnicoPadreOtro').required = true;
         } else {
+            console.log('Ocultando campo "Indique otro" para padre');
             grupoEtnicoPadreOtroGroup.style.display = 'none';
             document.getElementById('grupoEtnicoPadreOtro').required = false;
             document.getElementById('grupoEtnicoPadreOtro').value = '';
@@ -1573,17 +1634,24 @@ const FormularioPIAR = (function() {
         // Selects de Grupos Étnicos con opción "Otro"
         const grupoEtnicoSelect = document.getElementById('grupoEtnico');
         if (grupoEtnicoSelect) {
+            console.log('Event listener agregado para grupoEtnico');
             grupoEtnicoSelect.addEventListener('change', _handleGrupoEtnicoChange);
         }
         
         const grupoEtnicoMadreSelect = document.getElementById('grupoEtnicoMadre');
         if (grupoEtnicoMadreSelect) {
+            console.log('Event listener agregado para grupoEtnicoMadre');
             grupoEtnicoMadreSelect.addEventListener('change', _handleGrupoEtnicoMadreChange);
+        } else {
+            console.error('Element grupoEtnicoMadre no encontrado');
         }
         
         const grupoEtnicoPadreSelect = document.getElementById('grupoEtnicoPadre');
         if (grupoEtnicoPadreSelect) {
+            console.log('Event listener agregado para grupoEtnicoPadre');
             grupoEtnicoPadreSelect.addEventListener('change', _handleGrupoEtnicoPadreChange);
+        } else {
+            console.error('Element grupoEtnicoPadre no encontrado');
         }
         
         // Radio buttons condicionales de los padres
