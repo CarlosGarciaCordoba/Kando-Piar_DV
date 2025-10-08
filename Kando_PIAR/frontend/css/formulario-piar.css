@@ -1256,4 +1256,154 @@ label[for="observacionesEntornos"] {
     font-size: 15px;
 }
 
+/* Estilos para el contador de caracteres */
+.character-count {
+    display: block;
+    text-align: right;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 5px;
+    font-style: italic;
+}
+
+/* Estilos para la sección de firma digital */
+.signature-section {
+    background: #f8fafc;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 25px;
+    margin: 20px 0;
+}
+
+.signature-section h3 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 10px;
+}
+
+.signature-container {
+    margin-top: 20px;
+}
+
+.signature-container label {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    display: block;
+    font-size: 15px;
+}
+
+.signature-pad-container {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: white;
+    padding: 10px;
+    text-align: center;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+#signaturePad {
+    border: 1px dashed #cbd5e0;
+    border-radius: 6px;
+    cursor: crosshair;
+    background: white;
+    display: block;
+    margin: 0 auto;
+    width: 500px;
+    height: 200px;
+    max-width: 100%;
+}
+
+#signaturePad:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.1);
+}
+
+.signature-controls {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.signature-controls .btn-secondary {
+    padding: 8px 16px;
+    font-size: 14px;
+    min-width: 120px;
+}
+
+.signature-status {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.signature-status.info {
+    background: #e6f3ff;
+    color: #0066cc;
+    border: 1px solid #b3d9ff;
+}
+
+.signature-status.success {
+    background: #e6f7e6;
+    color: #008000;
+    border: 1px solid #b3e6b3;
+}
+
+.signature-status.warning {
+    background: #fff5e6;
+    color: #cc6600;
+    border: 1px solid #ffcc99;
+}
+
+.signature-status.error {
+    background: #ffe6e6;
+    color: #cc0000;
+    border: 1px solid #ffb3b3;
+}
+
+/* Responsividad para la firma digital */
+@media (max-width: 768px) {
+    .signature-section {
+        padding: 15px;
+        margin: 15px 0;
+    }
+    
+    #signaturePad {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .signature-controls {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .signature-controls .btn-secondary {
+        width: 100%;
+        max-width: 200px;
+    }
+}
+
+/* Estilos para textarea de observaciones generales */
+#observacionesGenerales {
+    min-height: 120px;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.5;
+}
+
+#observacionesGenerales:focus {
+    box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.1);
+    border-color: var(--primary-color);
+}
+
 

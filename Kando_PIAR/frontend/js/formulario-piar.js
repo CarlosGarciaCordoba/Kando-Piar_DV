@@ -116,6 +116,11 @@ const FormularioPIAR = (function() {
         formSections.style.display = 'block';
         enableFormBtn.style.display = 'none';
         
+        // Inicializar sistema de firma digital cuando el formulario es visible
+        setTimeout(() => {
+            _initSignatureSystem();
+        }, 100);
+        
         // Scroll suave hacia el formulario
         formSections.scrollIntoView({ 
             behavior: 'smooth',
@@ -2125,6 +2130,9 @@ const FormularioPIAR = (function() {
         window.addSupportInfo = addSupportInfo;
         window.removeSupportInfo = removeSupportInfo;
         
+        // El sistema de firma digital se inicializa cuando el formulario se hace visible
+        // _initSignatureSystem(); // Movido a _enableForm()
+        
         // Submit del formulario
         studentForm.addEventListener('submit', _handleFormSubmit);
         
@@ -2181,6 +2189,64 @@ const FormularioPIAR = (function() {
                 }
             });
         });
+    }
+    
+    // Inicializar sistema de firma digital
+    function _initSignatureSystem() {
+        // Verificar si existe el canvas de firma
+        const signatureCanvas = document.getElementById('signaturePad');
+        if (signatureCanvas) {
+            // Inicializar el pad de firma
+            signaturePadInstance = new SignaturePad('signaturePad');
+            
+            // Configurar botones
+            const clearBtn = document.getElementById('clearSignature');
+            const saveBtn = document.getElementById('saveSignature');
+            
+            if (clearBtn) {
+                clearBtn.addEventListener('click', () => signaturePadInstance.clear());
+            }
+            
+            if (saveBtn) {
+                saveBtn.addEventListener('click', () => signaturePadInstance.save());
+            }
+        }
+        
+        // Configurar contador de caracteres para observaciones generales
+        _setupCharacterCounter('observacionesGenerales', 2000);
+        
+        // Validación adicional para campos de firma
+        const documentoFirmante = document.getElementById('documentoFirmante');
+        if (documentoFirmante) {
+            documentoFirmante.addEventListener('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        }
+    }
+    
+    // Función para configurar contador de caracteres
+    function _setupCharacterCounter(textareaId, maxLength) {
+        const textarea = document.getElementById(textareaId);
+        const counter = textarea ? textarea.parentElement.querySelector('.character-count') : null;
+        
+        if (textarea && counter) {
+            textarea.addEventListener('input', function() {
+                const currentLength = this.value.length;
+                counter.textContent = `${currentLength}/${maxLength} caracteres`;
+                
+                if (currentLength > maxLength * 0.9) {
+                    counter.style.color = '#e53e3e';
+                } else if (currentLength > maxLength * 0.8) {
+                    counter.style.color = '#dd6b20';
+                } else {
+                    counter.style.color = '#a0aec0';
+                }
+            });
+            
+            // Inicializar el contador
+            const currentLength = textarea.value.length;
+            counter.textContent = `${currentLength}/${maxLength} caracteres`;
+        }
     }
     
     // Método público para inicializar
@@ -2264,3 +2330,173 @@ function logout() {
         });
     }
 }
+
+// Sistema de Firma Digital
+class SignaturePad {
+    constructor(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext('2d');
+        this.isDrawing = false;
+        this.hasSignature = false;
+        
+        this.setupCanvas();
+        this.bindEvents();
+        this.setCurrentDate();
+    }
+    
+    setupCanvas() {
+        // Obtener las dimensiones del canvas
+        const canvasWidth = this.canvas.width;
+        const canvasHeight = this.canvas.height;
+        
+        // Configurar estilos de dibujo
+        this.ctx.lineCap = 'round';
+        this.ctx.lineJoin = 'round';
+        this.ctx.strokeStyle = '#2d3748';
+        this.ctx.lineWidth = 2;
+        
+        // Fondo blanco para el canvas
+        this.ctx.fillStyle = '#ffffff';
+        this.ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+        
+        // Restaurar color para el dibujo
+        this.ctx.fillStyle = '#2d3748';
+        
+        console.log('Canvas configurado:', canvasWidth, 'x', canvasHeight);
+    }
+    
+    bindEvents() {
+        // Eventos de mouse
+        this.canvas.addEventListener('mousedown', (e) => this.startDrawing(e));
+        this.canvas.addEventListener('mousemove', (e) => this.draw(e));
+        this.canvas.addEventListener('mouseup', () => this.stopDrawing());
+        this.canvas.addEventListener('mouseout', () => this.stopDrawing());
+        
+        // Eventos táctiles para dispositivos móviles
+        this.canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousedown', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            this.canvas.dispatchEvent(mouseEvent);
+        });
+        
+        this.canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousemove', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            this.canvas.dispatchEvent(mouseEvent);
+        });
+        
+        this.canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            const mouseEvent = new MouseEvent('mouseup', {});
+            this.canvas.dispatchEvent(mouseEvent);
+        });
+    }
+    
+    getMousePos(e) {
+        const rect = this.canvas.getBoundingClientRect();
+        const scaleX = this.canvas.width / rect.width;
+        const scaleY = this.canvas.height / rect.height;
+        
+        return {
+            x: (e.clientX - rect.left) * scaleX,
+            y: (e.clientY - rect.top) * scaleY
+        };
+    }
+    
+    startDrawing(e) {
+        this.isDrawing = true;
+        const pos = this.getMousePos(e);
+        this.ctx.beginPath();
+        this.ctx.moveTo(pos.x, pos.y);
+        console.log('Iniciando dibujo en:', pos.x, pos.y);
+    }
+    
+    draw(e) {
+        if (!this.isDrawing) return;
+        
+        const pos = this.getMousePos(e);
+        this.ctx.lineTo(pos.x, pos.y);
+        this.ctx.stroke();
+        this.hasSignature = true;
+        console.log('Dibujando en:', pos.x, pos.y);
+    }
+    
+    stopDrawing() {
+        if (this.isDrawing) {
+            this.isDrawing = false;
+            this.ctx.beginPath();
+        }
+    }
+    
+    clear() {
+        const canvasWidth = this.canvas.width;
+        const canvasHeight = this.canvas.height;
+        
+        this.ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+        this.ctx.fillStyle = '#ffffff';
+        this.ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+        this.ctx.fillStyle = '#2d3748';
+        this.hasSignature = false;
+        
+        // Limpiar datos guardados
+        const signatureDataInput = document.getElementById('signatureData');
+        if (signatureDataInput) {
+            signatureDataInput.value = '';
+        }
+        
+        this.updateStatus('info', '<i class="fas fa-info-circle"></i> Dibuje su firma en el área anterior');
+        console.log('Canvas limpiado');
+    }
+    
+    save() {
+        if (!this.hasSignature) {
+            this.updateStatus('warning', '<i class="fas fa-exclamation-triangle"></i> Por favor, dibuje su firma antes de guardar');
+            return false;
+        }
+        
+        try {
+            const dataURL = this.canvas.toDataURL('image/png');
+            const signatureDataInput = document.getElementById('signatureData');
+            
+            if (signatureDataInput) {
+                signatureDataInput.value = dataURL;
+                this.updateStatus('success', '<i class="fas fa-check-circle"></i> Firma guardada correctamente');
+                return true;
+            }
+            
+            throw new Error('No se pudo encontrar el campo de datos de firma');
+        } catch (error) {
+            console.error('Error al guardar la firma:', error);
+            this.updateStatus('error', '<i class="fas fa-times-circle"></i> Error al guardar la firma');
+            return false;
+        }
+    }
+    
+    updateStatus(type, message) {
+        const statusElement = document.getElementById('signatureStatus');
+        if (statusElement) {
+            statusElement.className = `signature-status ${type}`;
+            statusElement.innerHTML = message;
+        }
+    }
+    
+    setCurrentDate() {
+        const fechaFirmaInput = document.getElementById('fechaFirma');
+        if (fechaFirmaInput) {
+            const today = new Date();
+            const formattedDate = today.toISOString().split('T')[0];
+            fechaFirmaInput.value = formattedDate;
+        }
+    }
+}
+
+// Variable global para el sistema de firma
+let signaturePadInstance = null;

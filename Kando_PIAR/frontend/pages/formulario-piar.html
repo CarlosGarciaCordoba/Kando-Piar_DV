@@ -4413,6 +4413,85 @@
                                 </div>
                             </div>
 
+                            <!-- Observaciones Generales -->
+                            <div class="section-divider">
+                                <h2>OBSERVACIONES GENERALES Y ASPECTOS A RESALTAR</h2>
+                            </div>
+
+                            <div class="subsection">
+                                <div class="form-row">
+                                    <div class="form-group full-width">
+                                        <label for="observacionesGenerales">Observaciones generales y aspectos a resaltar:</label>
+                                        <textarea id="observacionesGenerales" name="observacionesGenerales" rows="6" maxlength="2000" 
+                                                  placeholder="Escriba aquí las observaciones generales y aspectos que considera importantes resaltar sobre el estudiante..."></textarea>
+                                        <div class="error-message" id="observacionesGeneralesError"></div>
+                                        <small class="character-count">0/2000 caracteres</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sistema de Firma Digital -->
+                            <div class="section-divider">
+                                <h2>FIRMAS</h2>
+                            </div>
+
+                            <div class="subsection">
+                                <div class="signature-section">
+                                    <h3>Firma del Responsable del Diligenciamiento</h3>
+                                    
+                                    <!-- Información del firmante -->
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="nombreFirmante">Nombre completo:</label>
+                                            <input type="text" id="nombreFirmante" name="nombreFirmante" maxlength="150" required>
+                                            <div class="error-message" id="nombreFirmanteError"></div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="cargoFirmante">Cargo:</label>
+                                            <input type="text" id="cargoFirmante" name="cargoFirmante" maxlength="100" required>
+                                            <div class="error-message" id="cargoFirmanteError"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="documentoFirmante">Número de documento:</label>
+                                            <input type="text" id="documentoFirmante" name="documentoFirmante" maxlength="20" pattern="[0-9]*" required>
+                                            <div class="error-message" id="documentoFirmanteError"></div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="fechaFirma">Fecha de firma:</label>
+                                            <input type="date" id="fechaFirma" name="fechaFirma" required readonly>
+                                            <div class="error-message" id="fechaFirmaError"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Canvas para firma -->
+                                    <div class="signature-container">
+                                        <label>Firma digital:</label>
+                                        <div class="signature-pad-container">
+                                            <canvas id="signaturePad" width="500" height="200"></canvas>
+                                            <div class="signature-controls">
+                                                <button type="button" class="btn-secondary" id="clearSignature">
+                                                    <i class="fas fa-eraser"></i>
+                                                    Limpiar Firma
+                                                </button>
+                                                <button type="button" class="btn-secondary" id="saveSignature">
+                                                    <i class="fas fa-save"></i>
+                                                    Guardar Firma
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="signature-status" id="signatureStatus">
+                                            <i class="fas fa-info-circle"></i>
+                                            Dibuje su firma en el área anterior
+                                        </div>
+                                        <input type="hidden" id="signatureData" name="signatureData">
+                                        <div class="error-message" id="signatureDataError"></div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Botones de acción -->
                             <div class="form-actions">
                                 <button type="button" class="btn-secondary" onclick="clearForm()">
